@@ -353,13 +353,38 @@
     footer {
       border-top: 1px solid var(--border);
       text-align: center;
-      padding: 24px;
+      padding: 32px 24px;
       font-size: 0.85rem;
       color: var(--muted);
     }
 
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--accent); }
+    .ccg-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      margin-bottom: 12px;
+      opacity: 0.85;
+      transition: opacity 0.15s;
+    }
+    .ccg-link:hover { opacity: 1; text-decoration: none; }
+
+    .ccg-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .ccg-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .footer-links { margin-top: 4px; }
+    .footer-links a { color: var(--muted); }
+    .footer-links a:hover { color: var(--accent); }
 
     @media (max-width: 600px) {
       h1 { font-size: 1.8rem; }
@@ -565,8 +590,11 @@
 </main>
 
 <footer>
-  <p>
-    Built by <a href="https://github.com/feedmittens">feedmittens</a> ·
+  <a href="https://corkscrew-consulting.net" class="ccg-link">
+    <img src="logo-ccg.svg" alt="Corkscrew Consulting Group" class="ccg-logo">
+    <span class="ccg-name">Corkscrew Consulting Group</span>
+  </a>
+  <p class="footer-links">
     <a href="https://github.com/feedmittens/obsidian-to-notion">GitHub</a> ·
     MIT License
   </p>
