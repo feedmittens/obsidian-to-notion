@@ -90,9 +90,39 @@
       margin: 0 auto 36px;
     }
 
+    /* ── Platform tabs ── */
+    .platform-tabs {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 18px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+    .tab-btn:hover { background: var(--surface); color: var(--text); }
+    .tab-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .platform-panel { display: none; }
+    .platform-panel.active { display: block; }
+
     /* ── Terminal window ── */
     .terminal-wrap {
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto 28px;
     }
 
@@ -119,13 +149,20 @@
     .dot-yellow { background: #febc2e; }
     .dot-green  { background: #28c840; }
 
+    /* Windows terminal dots */
+    .dot-win { width: 14px; height: 14px; border-radius: 2px; font-size: 9px;
+               display: flex; align-items: center; justify-content: center; }
+    .dot-min  { background: #2d333b; color: #8b949e; }
+    .dot-max  { background: #2d333b; color: #8b949e; }
+    .dot-cls  { background: #c42b1c; color: white; }
+
     .terminal-title {
       flex: 1;
       text-align: center;
       font-size: 12px;
       color: #8b949e;
       font-family: "SFMono-Regular", Menlo, monospace;
-      margin-left: -54px; /* offset for dots so title is truly centered */
+      margin-left: -54px;
     }
 
     .terminal-body {
@@ -147,12 +184,14 @@
       line-height: 1.7;
     }
 
-    .t-prompt { color: var(--green); user-select: none; }
-    .t-cmd    { color: #e6edf3; }
-    .t-url    { color: var(--accent); }
-    .t-flag   { color: #c084fc; }
-    .t-file   { color: #febc2e; }
+    .t-prompt  { color: var(--green); user-select: none; }
+    .t-ps      { color: #3a96dd; user-select: none; }  /* PowerShell blue prompt */
+    .t-cmd     { color: #e6edf3; }
+    .t-url     { color: var(--accent); }
+    .t-flag    { color: #c084fc; }
+    .t-file    { color: #febc2e; }
     .t-comment { color: #8b949e; font-style: italic; }
+    .t-str     { color: #a5d6ff; }
 
     .copy-btn {
       position: absolute;
@@ -408,44 +447,91 @@
     folder structure, wiki-links, and all — without losing your mind.
   </p>
 
-  <div class="terminal-wrap">
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-red"></span>
-        <span class="dot dot-yellow"></span>
-        <span class="dot dot-green"></span>
-        <span class="terminal-title">zsh — migrate.sh</span>
-      </div>
-      <div class="terminal-body">
-        <button class="copy-btn" onclick="copyInstall(this)">Copy</button>
-        <pre><code id="install-cmd"
-><span class="t-comment"># download the script</span>
+  <!-- Platform tab picker -->
+  <div class="platform-tabs">
+    <button class="tab-btn active" onclick="showPlatform('macos', this)"> macOS</button>
+    <button class="tab-btn"        onclick="showPlatform('linux', this)"> Linux</button>
+    <button class="tab-btn"        onclick="showPlatform('windows', this)"> Windows</button>
+  </div>
+
+  <!-- macOS -->
+  <div id="panel-macos" class="platform-panel active">
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
+          <span class="terminal-title">zsh — migrate.sh</span>
+        </div>
+        <div class="terminal-body">
+          <button class="copy-btn" onclick="copyCmd('macos', this)">Copy</button>
+          <pre><code
+><span class="t-comment"># download</span>
 <span class="t-prompt">$</span> <span class="t-cmd">curl </span><span class="t-flag">-fsSL</span> <span class="t-url">https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh</span> <span class="t-flag">\
     -o</span> <span class="t-file">migrate.sh</span>
-
-<span class="t-comment"># optional but smart: read it before running</span>
-<span class="t-prompt">$</span> <span class="t-cmd">cat</span> <span class="t-file">migrate.sh</span>
-
 <span class="t-comment"># run the wizard</span>
 <span class="t-prompt">$</span> <span class="t-cmd">chmod +x</span> <span class="t-file">migrate.sh</span> <span class="t-cmd">&amp;&amp; ./</span><span class="t-file">migrate.sh</span></code></pre>
+        </div>
       </div>
     </div>
+    <div class="cta-group">
+      <a class="btn btn-primary" href="https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh" download="migrate.sh">⬇ Download migrate.sh</a>
+      <a class="btn btn-secondary" href="https://github.com/feedmittens/obsidian-to-notion">View on GitHub</a>
+    </div>
+    <p style="margin-top:14px;font-size:13px;color:#8b949e;">Requires macOS · Python 3.10+</p>
   </div>
 
-  <div class="cta-group">
-    <a class="btn btn-primary"
-       href="https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh"
-       download="migrate.sh">
-      ⬇ Download migrate.sh
-    </a>
-    <a class="btn btn-secondary"
-       href="https://github.com/feedmittens/obsidian-to-notion">
-      View on GitHub
-    </a>
+  <!-- Linux -->
+  <div id="panel-linux" class="platform-panel">
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot dot-red"></span><span class="dot dot-yellow"></span><span class="dot dot-green"></span>
+          <span class="terminal-title">bash — migrate.sh</span>
+        </div>
+        <div class="terminal-body">
+          <button class="copy-btn" onclick="copyCmd('linux', this)">Copy</button>
+          <pre><code
+><span class="t-comment"># download</span>
+<span class="t-prompt">$</span> <span class="t-cmd">curl </span><span class="t-flag">-fsSL</span> <span class="t-url">https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install-linux.sh</span> <span class="t-flag">\
+    -o</span> <span class="t-file">migrate.sh</span>
+<span class="t-comment"># run the wizard</span>
+<span class="t-prompt">$</span> <span class="t-cmd">chmod +x</span> <span class="t-file">migrate.sh</span> <span class="t-cmd">&amp;&amp; ./</span><span class="t-file">migrate.sh</span></code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="cta-group">
+      <a class="btn btn-primary" href="https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install-linux.sh" download="migrate.sh">⬇ Download migrate.sh</a>
+      <a class="btn btn-secondary" href="https://github.com/feedmittens/obsidian-to-notion">View on GitHub</a>
+    </div>
+    <p style="margin-top:14px;font-size:13px;color:#8b949e;">Requires Linux · Python 3.10+ · Ubuntu, Fedora, Arch, and more</p>
   </div>
-  <p style="margin-top: 14px; font-size: 13px; color: #8b949e;">
-    Linux/Windows users: <a href="https://github.com/feedmittens/obsidian-to-notion#readme" style="color: #8b949e;">see the README</a>
-  </p>
+
+  <!-- Windows -->
+  <div id="panel-windows" class="platform-panel">
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot-win dot-min">─</span><span class="dot-win dot-max">□</span><span class="dot-win dot-cls">✕</span>
+          <span class="terminal-title" style="margin-left:-54px">PowerShell — install.ps1</span>
+        </div>
+        <div class="terminal-body">
+          <button class="copy-btn" onclick="copyCmd('windows', this)">Copy</button>
+          <pre><code
+><span class="t-comment"># download</span>
+<span class="t-ps">PS&gt;</span> <span class="t-cmd">Invoke-WebRequest</span> <span class="t-flag">-Uri</span> <span class="t-str">"https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.ps1"</span> <span class="t-flag">`
+    -OutFile</span> <span class="t-file">migrate.ps1</span>
+<span class="t-comment"># run the wizard</span>
+<span class="t-ps">PS&gt;</span> <span class="t-cmd">.\</span><span class="t-file">migrate.ps1</span></code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="cta-group">
+      <a class="btn btn-primary" href="https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.ps1" download="migrate.ps1">⬇ Download migrate.ps1</a>
+      <a class="btn btn-secondary" href="https://github.com/feedmittens/obsidian-to-notion">View on GitHub</a>
+    </div>
+    <p style="margin-top:14px;font-size:13px;color:#8b949e;">Requires Windows · PowerShell 5.1+ · Python 3.10+</p>
+    <p style="margin-top:6px;font-size:12px;color:#6e7681;">If scripts are blocked: <code style="font-size:11px;">Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></p>
+  </div>
 </header>
 
 <main>
@@ -601,17 +687,40 @@
 </footer>
 
 <script>
-  function copyInstall(btn) {
-    const cmd = [
-      'curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh -o migrate.sh',
-      'chmod +x migrate.sh && ./migrate.sh'
-    ].join('\n');
-    navigator.clipboard.writeText(cmd).then(() => {
+  const CMDS = {
+    macos:   'curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh -o migrate.sh\nchmod +x migrate.sh && ./migrate.sh',
+    linux:   'curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install-linux.sh -o migrate.sh\nchmod +x migrate.sh && ./migrate.sh',
+    windows: 'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.ps1" -OutFile migrate.ps1\n.\\migrate.ps1',
+  };
+
+  function showPlatform(platform, btn) {
+    document.querySelectorAll('.platform-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + platform).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  function copyCmd(platform, btn) {
+    navigator.clipboard.writeText(CMDS[platform]).then(() => {
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
     });
   }
+
+  // Auto-select tab based on visitor OS
+  (function() {
+    const p = navigator.platform.toLowerCase();
+    const ua = navigator.userAgent.toLowerCase();
+    if (p.includes('win') || ua.includes('windows')) {
+      const btn = document.querySelector('.tab-btn:nth-child(3)');
+      showPlatform('windows', btn);
+    } else if (p.includes('linux') || ua.includes('linux')) {
+      const btn = document.querySelector('.tab-btn:nth-child(2)');
+      showPlatform('linux', btn);
+    }
+    // macOS is default, already active
+  })();
 </script>
 </body>
 </html>

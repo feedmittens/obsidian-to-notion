@@ -143,3 +143,32 @@ Bug reports and PRs welcome. The most wanted improvements:
 ## License
 
 MIT
+
+---
+
+## Changelog
+
+### v0.5.0 — 2026-06-03
+- Linux installer (`install-linux.sh`) with distro-aware Python hints and `xdg-open` browser support
+- Windows PowerShell installer (`install.ps1`) with `winget`/`choco` hints and native vault detection
+- Platform tab picker on landing page — auto-selects macOS/Linux/Windows based on visitor OS
+
+### v0.4.0 — 2026-06-03
+- Corkscrew Consulting Group SVG logo (`docs/logo-ccg.svg`)
+- Footer branding linking to corkscrew-consulting.net
+
+### v0.3.0 — 2026-06-03
+- Interactive macOS installer wizard (`install.sh`)
+- Auto-detects Obsidian vaults from `~/Library/Application Support/obsidian`
+- Guides through Notion integration setup, dry-run, and migration in one flow
+- Resume support: saves config to `~/.config/obsidian-to-notion/` (token never committed)
+
+### v0.2.0 — 2026-06-03
+- GitHub Pages landing page (`docs/index.html`)
+- Dark-themed with feature grid, support matrix, and styled terminal install block
+
+### v0.1.0 — 2026-06-03
+- Initial release: two-phase Obsidian → Notion migration
+- 52 unit tests (inline parser, block converter, attachment resolution, cross-link resolution)
+- Dry-run mode, resume support, rate limiting with exponential backoff
+- Handles: headings, lists, checkboxes, code blocks, callouts, wiki-links, embedded images, frontmatter
