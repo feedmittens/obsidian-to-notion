@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>obsidian-to-notion</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-dim: #1f3a5f;
+      --green: #3fb950;
+      --code-bg: #1c2128;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 40px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 2px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; text-decoration: none; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d1117;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    section { margin-bottom: 56px; }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p { margin-bottom: 12px; color: var(--muted); }
+    p strong { color: var(--text); }
+
+    /* ── Feature grid ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+
+    .feature-icon { font-size: 1.4rem; margin-bottom: 8px; }
+    .feature h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .feature p { font-size: 0.85rem; margin: 0; color: var(--muted); }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+
+    .step {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 16px;
+      position: relative;
+    }
+
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 42px;
+      bottom: -24px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step + .step { margin-top: 24px; }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .step-body { padding-top: 8px; }
+    .step-body h3 { font-size: 1rem; margin-bottom: 6px; }
+    .step-body p { margin: 0 0 10px; font-size: 0.9rem; }
+
+    /* ── Code blocks ── */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85rem;
+      color: #e6edf3;
+    }
+
+    p code, li code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.85em;
+      color: var(--accent);
+    }
+
+    /* ── What it handles table ── */
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .support-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .support-box h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .support-box.yes h3 { color: var(--green); }
+    .support-box.no  h3 { color: #f85149; }
+
+    .support-box ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .support-box li {
+      font-size: 0.875rem;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .support-box.yes li::before { content: '✓'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+    .support-box.no  li::before { content: '✗'; position: absolute; left: 0; color: #f85149; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8rem; }
+      .support-grid { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Python · MIT License</div>
+  <h1>obsidian-to-<span>notion</span></h1>
+  <p class="tagline">
+    Move your entire Obsidian vault to Notion — notes, attachments,
+    folder structure, wiki-links, and all — without losing your mind.
+  </p>
+  <div class="cta-group">
+    <a class="btn btn-primary"
+       href="https://github.com/feedmittens/obsidian-to-notion/archive/refs/heads/main.zip">
+      ⬇ Download ZIP
+    </a>
+    <a class="btn btn-secondary"
+       href="https://github.com/feedmittens/obsidian-to-notion">
+      View on GitHub
+    </a>
+  </div>
+</header>
+
+<main>
+
+  <!-- What it does -->
+  <section>
+    <h2>What it does</h2>
+    <p>
+      Obsidian stores everything as plain markdown on disk.
+      Notion stores everything as blocks in a proprietary API.
+      This tool bridges the gap without you having to click-import
+      500 notes one at a time.
+    </p>
+    <div class="features" style="margin-top: 20px;">
+      <div class="feature">
+        <div class="feature-icon">📁</div>
+        <h3>Preserves folder structure</h3>
+        <p>Every folder becomes a nested Notion page, exactly where you'd expect it.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔗</div>
+        <h3>Resolves wiki-links</h3>
+        <p><code>[[Note Name]]</code> becomes a real Notion page mention, not broken text.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🖼️</div>
+        <h3>Uploads attachments</h3>
+        <p>Images and files are uploaded to Notion via the file API — no manual dragging.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">♻️</div>
+        <h3>Resumable</h3>
+        <p>Saves progress to a state file. Ctrl-C whenever — re-run to pick up where you left off.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔍</div>
+        <h3>Dry-run mode</h3>
+        <p>Preview everything that would happen before making a single API call.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🏷️</div>
+        <h3>Frontmatter tags</h3>
+        <p>YAML frontmatter is preserved as a callout block with your tags intact.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's supported -->
+  <section>
+    <h2>What's handled (and what isn't)</h2>
+    <div class="support-grid">
+      <div class="support-box yes">
+        <h3>Supported</h3>
+        <ul>
+          <li>Headings (H1–H6)</li>
+          <li>Bold, italic, strikethrough, code</li>
+          <li>Bullet and numbered lists</li>
+          <li>Checkboxes / task lists</li>
+          <li>Code blocks with language</li>
+          <li>Blockquotes</li>
+          <li>Callouts (<code>&gt; [!NOTE]</code>, etc.)</li>
+          <li><code>[[Wiki-links]]</code></li>
+          <li><code>![[Embedded images]]</code></li>
+          <li>External image URLs</li>
+          <li>YAML frontmatter tags</li>
+          <li>Obsidian <code>==highlights==</code></li>
+        </ul>
+      </div>
+      <div class="support-box no">
+        <h3>Not supported</h3>
+        <ul>
+          <li>Canvas files (<code>.canvas</code>)</li>
+          <li>Dataview queries</li>
+          <li>Markdown tables</li>
+          <li>Nested list indentation</li>
+          <li>Templater / plugin syntax</li>
+          <li>Files larger than 20 MB</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to use -->
+  <section>
+    <h2>How to use it</h2>
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Create a Notion integration</h3>
+          <p>
+            Go to <a href="https://www.notion.so/my-integrations">notion.so/my-integrations</a>,
+            click <strong>New integration</strong>, and copy your token
+            (<code>secret_...</code>).
+            Then open the Notion page you want to migrate into, click
+            <strong>···&nbsp;→ Connect to</strong>, and pick your integration.
+            Copy the page ID from the URL — it's the 32-character hex string after the last <code>/</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Download and install</h3>
+          <pre><code># Download and unzip, or clone:
+git clone https://github.com/feedmittens/obsidian-to-notion.git
+cd obsidian-to-notion
+
+# Create a virtual environment and install dependencies:
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Dry run first</h3>
+          <p>Always sanity-check before touching your Notion workspace:</p>
+          <pre><code>python obsidian_to_notion.py \
+  --vault ~/Documents/MyVault \
+  --token secret_xxxxxxxxxxxxxxxxxxxxxxxx \
+  --root-page abcdef1234567890abcdef1234567890 \
+  --dry-run</code></pre>
+          <p>This prints everything that would happen — no API calls made.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Run the migration</h3>
+          <p>Same command, drop the <code>--dry-run</code>:</p>
+          <pre><code>python obsidian_to_notion.py \
+  --vault ~/Documents/MyVault \
+  --token secret_xxxxxxxxxxxxxxxxxxxxxxxx \
+  --root-page abcdef1234567890abcdef1234567890</code></pre>
+          <p>
+            Progress is saved to <code>migration_state.json</code> as it runs.
+            If it's interrupted, just re-run the same command — it picks up where it left off.
+          </p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Done</h3>
+          <p>
+            Your vault is in Notion. Cross-note links are resolved, attachments are uploaded,
+            and the folder hierarchy is intact. You can delete <code>migration_state.json</code>
+            when you're satisfied everything came through.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Options -->
+  <section>
+    <h2>All options</h2>
+    <pre><code>--vault PATH            Path to your Obsidian vault directory (required)
+--token TOKEN           Notion integration token, starts with secret_ (required)
+--root-page PAGE_ID     Notion page ID to migrate content into (required)
+--dry-run               Preview without making any API calls
+--skip-attachments      Skip uploads; note filenames as text instead
+--reset                 Delete state file and restart from scratch
+--state-file PATH       Custom path for the resume state file</code></pre>
+  </section>
+
+</main>
+
+<footer>
+  <p>
+    Built by <a href="https://github.com/feedmittens">feedmittens</a> ·
+    <a href="https://github.com/feedmittens/obsidian-to-notion">GitHub</a> ·
+    MIT License
+  </p>
+</footer>
+
+</body>
+</html>
