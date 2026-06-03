@@ -1,0 +1,5 @@
+notion-client>=2.2.1
+python-frontmatter>=1.0.0
+tqdm>=4.66.0
+requests>=2.31.0
+pytest>=8.0.0
