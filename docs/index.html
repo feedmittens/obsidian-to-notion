@@ -275,14 +275,19 @@
   </p>
   <div class="cta-group">
     <a class="btn btn-primary"
-       href="https://github.com/feedmittens/obsidian-to-notion/archive/refs/heads/main.zip">
-      ⬇ Download ZIP
+       href="https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh"
+       download="migrate.sh">
+      ⬇ Download migrate.sh
     </a>
     <a class="btn btn-secondary"
        href="https://github.com/feedmittens/obsidian-to-notion">
       View on GitHub
     </a>
   </div>
+  <p style="margin-top: 16px; font-size: 13px; color: #8b949e;">
+    macOS only &nbsp;·&nbsp; Python 3.10+ required &nbsp;·&nbsp;
+    <a href="https://github.com/feedmittens/obsidian-to-notion#readme" style="color: #8b949e;">Linux/Windows: see README</a>
+  </p>
 </header>
 
 <main>
@@ -388,56 +393,33 @@
       <div class="step">
         <div class="step-num">2</div>
         <div class="step-body">
-          <h3>Download and install</h3>
-          <pre><code># Download and unzip, or clone:
-git clone https://github.com/feedmittens/obsidian-to-notion.git
-cd obsidian-to-notion
+          <h3>Download and run the installer</h3>
+          <p>Download <code>migrate.sh</code> above (or via curl), then run it — it handles everything from here:</p>
+          <pre><code># Download
+curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh \
+  -o migrate.sh
 
-# Create a virtual environment and install dependencies:
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt</code></pre>
+# Inspect it first (good habit)
+cat migrate.sh
+
+# Run
+chmod +x migrate.sh && ./migrate.sh</code></pre>
+          <p>The script installs the tool, detects your vaults, walks you through Notion setup, and runs the migration.</p>
         </div>
       </div>
 
       <div class="step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <h3>Dry run first</h3>
-          <p>Always sanity-check before touching your Notion workspace:</p>
-          <pre><code>python obsidian_to_notion.py \
-  --vault ~/Documents/MyVault \
-  --token secret_xxxxxxxxxxxxxxxxxxxxxxxx \
-  --root-page abcdef1234567890abcdef1234567890 \
-  --dry-run</code></pre>
-          <p>This prints everything that would happen — no API calls made.</p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-body">
-          <h3>Run the migration</h3>
-          <p>Same command, drop the <code>--dry-run</code>:</p>
-          <pre><code>python obsidian_to_notion.py \
-  --vault ~/Documents/MyVault \
-  --token secret_xxxxxxxxxxxxxxxxxxxxxxxx \
-  --root-page abcdef1234567890abcdef1234567890</code></pre>
-          <p>
-            Progress is saved to <code>migration_state.json</code> as it runs.
-            If it's interrupted, just re-run the same command — it picks up where it left off.
-          </p>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-body">
           <h3>Done</h3>
           <p>
+            The installer runs a dry-run preview, asks you to confirm, then migrates everything.
+            Progress is saved as it runs — if it's interrupted, re-run <code>./migrate.sh</code>
+            and it picks up where it left off.
+          </p>
+          <p>
             Your vault is in Notion. Cross-note links are resolved, attachments are uploaded,
-            and the folder hierarchy is intact. You can delete <code>migration_state.json</code>
-            when you're satisfied everything came through.
+            and the folder hierarchy is intact.
           </p>
         </div>
       </div>
