@@ -20,7 +20,44 @@ Migrate an Obsidian vault to Notion — markdown files, attachments, folder hier
 - **Tables** — basic markdown tables are passed through as paragraphs (Notion table API is complex; PRs welcome)
 - **Files > 20 MB** — Notion's upload API limit
 
-## Prerequisites
+## Quick start
+
+Download the installer for your platform and run it — it handles everything else.
+
+**macOS**
+```bash
+curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.sh -o migrate.sh
+chmod +x migrate.sh && ./migrate.sh
+```
+
+**Linux**
+```bash
+curl -fsSL https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install-linux.sh -o migrate.sh
+chmod +x migrate.sh && ./migrate.sh
+```
+
+**Windows** (PowerShell)
+```powershell
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/feedmittens/obsidian-to-notion/main/install.ps1" -OutFile migrate.ps1
+.\migrate.ps1
+```
+
+> **Windows note:** if scripts are blocked, first run:
+> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
+
+Each installer will:
+1. Check for Python 3.10+ and tell you how to install it if missing
+2. Download and set up the tool automatically
+3. Auto-detect your Obsidian vaults
+4. Walk you through creating a Notion integration token and picking a root page
+5. Run a dry-run preview before touching anything
+6. Run the real migration, saving progress so it can resume if interrupted
+
+---
+
+## Prerequisites (manual / developer setup)
+
+If you'd rather not use the installer:
 
 ### 1. Notion integration
 
@@ -36,13 +73,13 @@ Migrate an Obsidian vault to Notion — markdown files, attachments, folder hier
 python3 --version   # need 3.10 or newer
 ```
 
-## Installation
+### 3. Install dependencies
 
 ```bash
 git clone https://github.com/feedmittens/obsidian-to-notion.git
 cd obsidian-to-notion
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -69,11 +106,9 @@ python obsidian_to_notion.py \
   --root-page abcdef1234567890abcdef1234567890
 ```
 
-Progress is saved to `migration_state.json` as it runs. If the process is interrupted, re-run the same command to pick up where it left off.
+Progress is saved to `migration_state.json` as it runs. If interrupted, re-run the same command to pick up where it left off.
 
 ### Skip attachment uploads
-
-If you want to migrate notes first and handle attachments manually:
 
 ```bash
 python obsidian_to_notion.py \
@@ -95,7 +130,7 @@ python obsidian_to_notion.py \
   --reset
 ```
 
-Deletes `migration_state.json` and starts fresh. Note: this will create duplicate pages in Notion if the previous run created any — clean those up manually first.
+Deletes `migration_state.json` and starts fresh. If the previous run already created pages in Notion, clean those up manually first to avoid duplicates.
 
 ## All options
 
